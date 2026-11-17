@@ -1,13 +1,16 @@
 
-import pool from "./config/db.js";
+import prisma from "./config/db.js";
 
 try {
-  const result = await pool.query("SELECT NOW()");
+  await prisma.$connect();
 
-  console.log("PostgreSQL connected!");
-  console.log(result.rows[0]);
+  console.log("✅ Prisma connected to Neon!");
+
+  const result = await prisma.$queryRaw`SELECT NOW()`;
+  console.log(result[0]);
 } catch (error) {
-  console.error("Database connection failed:", error.message);
+  console.error("Connection failed:", error.message);
+  process.exitCode = 1;
 } finally {
-  await pool.end();
+  await prisma.$disconnect();
 }
